@@ -4,56 +4,121 @@
 <title>RudeBoiiGang4eva</title>
 
 <style>
+
 body{
 margin:0;
+overflow:hidden;
 background:black;
 color:white;
 font-family:Arial;
-text-align:center;
 }
 
-#game{
-width:100%;
-height:100vh;
-background:url("https://i.imgur.com/ChicagoSkyline.jpg");
-background-size:cover;
+#info{
+position:absolute;
+top:10px;
+left:10px;
+z-index:100;
+background:rgba(0,0,0,0.6);
+padding:10px;
 }
 
-button{
-padding:20px;
-font-size:20px;
-margin-top:30px;
+canvas{
+display:block;
 }
+
 </style>
 
 </head>
 
 <body>
 
-<h1>RudeBoiiGang4eva</h1>
-
-<div id="game">
-
-<p>Welcome to Chicago Survivor Mode</p>
-
-<button onclick="startGame()">Start Mission</button>
-
+<div id="info">
+<h2>RudeBoiiGang4eva</h2>
+<p>Move: W A S D</p>
+<p>Mission: Explore Chicago</p>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 
-function startGame(){
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
 
-alert("Mission Start: Find the power generator in the building!");
+let renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+camera.position.z = 5;
+
+let geometry = new THREE.BoxGeometry();
+let material = new THREE.MeshBasicMaterial({color:0x00ff00});
+let player = new THREE.Mesh(geometry,material);
+
+scene.add(player);
+
+let buildings = [];
+
+for(let i=0;i<40;i++){
+
+let g = new THREE.BoxGeometry(2,Math.random()*10+2,2);
+let m = new THREE.MeshBasicMaterial({color:0x444444});
+let b = new THREE.Mesh(g,m);
+
+b.position.x = Math.random()*80-40;
+b.position.z = Math.random()*80-40;
+b.position.y = g.parameters.height/2;
+
+scene.add(b);
+buildings.push(b);
 
 }
 
+let keys = {};
+
+document.addEventListener("keydown",(e)=>{
+
+keys[e.key.toLowerCase()] = true;
+
+});
+
+document.addEventListener("keyup",(e)=>{
+
+keys[e.key.toLowerCase()] = false;
+
+});
+
+function movePlayer(){
+
+if(keys["w"]) player.position.z -= 0.1;
+if(keys["s"]) player.position.z += 0.1;
+if(keys["a"]) player.position.x -= 0.1;
+if(keys["d"]) player.position.x += 0.1;
+
+camera.position.x = player.position.x;
+camera.position.z = player.position.z + 5;
+
+}
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+movePlayer();
+
+renderer.render(scene,camera);
+
+}
+
+animate();
+
 </script>
 
-<footer>
+<footer style="position:absolute;bottom:10px;left:10px">
 
-© 2026 Damario Brady  
-BlakGod Connection Records LLC
+Created by Damario Brady  
+BlakGod Connection Records LLC  
+© 2026
 
 </footer>
 
